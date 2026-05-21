@@ -107,7 +107,7 @@ CREATE TABLE deslocamento_monstro (
 CREATE TABLE pericia_monstro (
 	id INT PRIMARY KEY AUTO_INCREMENT,
     pericia_id INT,
-    FOREIGN KEY (pericia_id) REFERENCES pericia(id),
+    FOREIGN KEY (pericia_id) REFERENCES pericias(id),
     monstro_id INT,
     FOREIGN KEY (monstro_id) REFERENCES monstro(id)
 );
@@ -115,9 +115,9 @@ CREATE TABLE pericia_monstro (
 CREATE TABLE resistencia_monstro (
 	id INT PRIMARY KEY AUTO_INCREMENT,
     resistencia_id INT,
-    FOREIGN KEY (resistencias_id) REFERENCES resistencias(id),
+    FOREIGN KEY (resistencia_id) REFERENCES resistencias(id),
     monstro_id INT,
-    FOREIGN KEY (monstro_id) REFERENCES monstro(id)
+    FOREIGN KEY (monstro_id) REFERENCES monstros(id)
 );
 
 CREATE TABLE vulnerabilidade_monstro (
@@ -125,7 +125,7 @@ CREATE TABLE vulnerabilidade_monstro (
     vulnerabilidades_id INT,
     FOREIGN KEY (vulnerabilidade_id) REFERENCES vulnerabilidades(id),
     monstro_id INT,
-    FOREIGN KEY (monstro_id) REFERENCES monstro(id)
+    FOREIGN KEY (monstro_id) REFERENCES monstros(id)
 );
 
 CREATE TABLE imunidade_dano_monstro (
@@ -133,7 +133,7 @@ CREATE TABLE imunidade_dano_monstro (
     imunidade_id INT,
     FOREIGN KEY (imunidade_id) REFERENCES imunidades_dano(id),
     monstro_id INT,
-    FOREIGN KEY (monstro_id) REFERENCES monstro(id)
+    FOREIGN KEY (monstro_id) REFERENCES monstros(id)
 );
 
 CREATE TABLE imunidade_condicao_monstro (
@@ -141,7 +141,7 @@ CREATE TABLE imunidade_condicao_monstro (
     imunidade_id INT,
     FOREIGN KEY (imunidade_id) REFERENCES imunidades_condicao(id),
     monstro_id INT,
-    FOREIGN KEY (monstro_id) REFERENCES monstro(id)
+    FOREIGN KEY (monstro_id) REFERENCES monstros(id)
 );
 
 CREATE TABLE sentido_monstro (
@@ -149,7 +149,7 @@ CREATE TABLE sentido_monstro (
     sentido_id INT,
     FOREIGN KEY (sentido_id) REFERENCES sentidos(id),
     monstro_id INT,
-    FOREIGN KEY (monstro_id) REFERENCES monstro(id),
+    FOREIGN KEY (monstro_id) REFERENCES monstros(id),
     distancia INT
 );
 
@@ -158,5 +158,5 @@ CREATE TABLE idioma_monstro (
     idioma_id INT,
     FOREIGN KEY (idioma_id) REFERENCES idiomas(id),
     monstro_id INT,
-    FOREIGN KEY (monstro_id) REFERENCES monstro(id)
+    FOREIGN KEY (monstro_id) REFERENCES monstros(id)
 );
