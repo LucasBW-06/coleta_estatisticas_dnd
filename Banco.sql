@@ -4,57 +4,57 @@ USE estatisticas_dnd;
 
 CREATE TABLE tamanho (
 	id INT PRIMARY KEY AUTO_INCREMENT,
-    tamanho VARCHAR(10) NOT NULL
+    tamanho VARCHAR(25) NOT NULL
 );
 
 CREATE TABLE tipo (
 	id INT PRIMARY KEY AUTO_INCREMENT,
-    tipo VARCHAR(10)
+    tipo VARCHAR(25)
 );
 
 CREATE TABLE subtipo (
 	id INT PRIMARY KEY AUTO_INCREMENT,
-    subtipo VARCHAR(10)
+    subtipo VARCHAR(25)
 );
 
 CREATE TABLE alinhamento (
 	id INT PRIMARY KEY AUTO_INCREMENT,
-    tipo VARCHAR(10)
+    tipo VARCHAR(25)
 );
 
 CREATE TABLE deslocamento (
 	id INT PRIMARY KEY AUTO_INCREMENT,
-    deslocamento VARCHAR(10)
+    deslocamento VARCHAR(25)
 );
 
 CREATE TABLE subdeslocamento (
 	id INT PRIMARY KEY AUTO_INCREMENT,
-    subdeslocamento VARCHAR(10)
+    subdeslocamento VARCHAR(25)
 );
 
 CREATE TABLE pericias (
 	id INT PRIMARY KEY AUTO_INCREMENT,
-    pericia VARCHAR(10)
+    pericia VARCHAR(25)
 );
 
 CREATE TABLE resistencias (
 	id INT PRIMARY KEY AUTO_INCREMENT,
-    resistencia VARCHAR(10)
+    resistencia VARCHAR(25)
 );
 
 CREATE TABLE vulnerabilidades (
 	id INT PRIMARY KEY AUTO_INCREMENT,
-    vulnerabilidade VARCHAR(10)
+    vulnerabilidade VARCHAR(25)
 );
 
 CREATE TABLE imunidades_dano (
 	id INT PRIMARY KEY AUTO_INCREMENT,
-    imunidade VARCHAR(10)
+    imunidade VARCHAR(25)
 );
 
 CREATE TABLE imunidades_condicao (
 	id INT PRIMARY KEY AUTO_INCREMENT,
-    imunidade VARCHAR(10)
+    imunidade VARCHAR(25)
 );
 
 CREATE TABLE sentidos (
@@ -69,7 +69,7 @@ CREATE TABLE idiomas (
 
 CREATE TABLE habitats (
 	id INT PRIMARY KEY AUTO_INCREMENT,
-    habitat VARCHAR(10)
+    habitat VARCHAR(25)
 );
 
 CREATE TABLE monstros (
@@ -81,8 +81,6 @@ CREATE TABLE monstros (
     FOREIGN KEY (tipo_id) REFERENCES tipo(id),
     subtipo_id INT,
     FOREIGN KEY (subtipo_id) REFERENCES subtipo(id),
-    alinhamento_id INT,
-    FOREIGN KEY (alinhamento_id) REFERENCES alinhamento(id),
     classe_armadura INT,
     pontos_vida INT,
     iniciativa INT,
@@ -92,8 +90,9 @@ CREATE TABLE monstros (
     inteligencia INT,
     sabedoria INT,
     carisma INT,
-    nivel_desafio VARCHAR(5),
-    link VARCHAR(250)
+    nivel_desafio VARCHAR(25),
+    link VARCHAR(250),
+    fonte VARCHAR(50)
 );
 
 CREATE TABLE deslocamento_monstro (
@@ -109,6 +108,14 @@ CREATE TABLE pericia_monstro (
 	id INT PRIMARY KEY AUTO_INCREMENT,
     pericia_id INT,
     FOREIGN KEY (pericia_id) REFERENCES pericias(id),
+    monstro_id INT,
+    FOREIGN KEY (monstro_id) REFERENCES monstros(id)
+);
+
+CREATE TABLE alinhamento_monstro (
+	id INT PRIMARY KEY AUTO_INCREMENT,
+    alinhamento_id INT,
+    FOREIGN KEY (alinhamento_id) REFERENCES alinhamentos(id),
     monstro_id INT,
     FOREIGN KEY (monstro_id) REFERENCES monstros(id)
 );
