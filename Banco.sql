@@ -1,3 +1,4 @@
+DROP DATABASE estatisticas_dnd;
 CREATE DATABASE estatisticas_dnd;
 USE estatisticas_dnd;
 
@@ -100,7 +101,7 @@ CREATE TABLE deslocamento_monstro (
     deslocamento_id INT,
     FOREIGN KEY (deslocamento_id) REFERENCES deslocamento(id),
     monstro_id INT,
-    FOREIGN KEY (monstro_id) REFERENCES monstro(id),
+    FOREIGN KEY (monstro_id) REFERENCES monstros(id),
     distancia INT
 );
 
@@ -109,7 +110,7 @@ CREATE TABLE pericia_monstro (
     pericia_id INT,
     FOREIGN KEY (pericia_id) REFERENCES pericias(id),
     monstro_id INT,
-    FOREIGN KEY (monstro_id) REFERENCES monstro(id)
+    FOREIGN KEY (monstro_id) REFERENCES monstros(id)
 );
 
 CREATE TABLE resistencia_monstro (
@@ -122,7 +123,7 @@ CREATE TABLE resistencia_monstro (
 
 CREATE TABLE vulnerabilidade_monstro (
 	id INT PRIMARY KEY AUTO_INCREMENT,
-    vulnerabilidades_id INT,
+    vulnerabilidade_id INT,
     FOREIGN KEY (vulnerabilidade_id) REFERENCES vulnerabilidades(id),
     monstro_id INT,
     FOREIGN KEY (monstro_id) REFERENCES monstros(id)
