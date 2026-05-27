@@ -8,6 +8,8 @@ headers = {
                   }
 response = requests.get(url, timeout=20, headers=headers)
 soup = BeautifulSoup(response.text, 'html.parser')
-
-for tr in soup.find_all('tr'):
-    print(tr.find('td').text if tr.find('td') else "")
+table = soup.find('table')
+for tr in table.find_all('tr'):
+    temp = tr.text.split("\n")
+    print(f'"{temp[1]}":"{temp[2]}",')
+    

@@ -74,16 +74,13 @@ CREATE TABLE habitats (
 
 CREATE TABLE monstros (
 	id INT PRIMARY KEY AUTO_INCREMENT,
-    nome VARCHAR(50),
-    tamanho_id INT,
-    FOREIGN KEY (tamanho_id) REFERENCES tamanho(id),
+    nome VARCHAR(150),
     tipo_id INT,
     FOREIGN KEY (tipo_id) REFERENCES tipo(id),
     subtipo_id INT,
     FOREIGN KEY (subtipo_id) REFERENCES subtipo(id),
     classe_armadura INT,
     pontos_vida INT,
-    iniciativa INT,
     forca INT,
     destreza INT,
     constituicao INT,
@@ -92,7 +89,7 @@ CREATE TABLE monstros (
     carisma INT,
     nivel_desafio VARCHAR(25),
     link VARCHAR(250),
-    fonte VARCHAR(50)
+    fonte VARCHAR(150)
 );
 
 CREATE TABLE deslocamento_monstro (
@@ -115,7 +112,7 @@ CREATE TABLE pericia_monstro (
 CREATE TABLE alinhamento_monstro (
 	id INT PRIMARY KEY AUTO_INCREMENT,
     alinhamento_id INT,
-    FOREIGN KEY (alinhamento_id) REFERENCES alinhamentos(id),
+    FOREIGN KEY (alinhamento_id) REFERENCES alinhamento(id),
     monstro_id INT,
     FOREIGN KEY (monstro_id) REFERENCES monstros(id)
 );
@@ -165,6 +162,22 @@ CREATE TABLE idioma_monstro (
 	id INT PRIMARY KEY AUTO_INCREMENT,
     idioma_id INT,
     FOREIGN KEY (idioma_id) REFERENCES idiomas(id),
+    monstro_id INT,
+    FOREIGN KEY (monstro_id) REFERENCES monstros(id)
+);
+
+CREATE TABLE habitat_monstro (
+	id INT PRIMARY KEY AUTO_INCREMENT,
+    habitat_id INT,
+    FOREIGN KEY (habitat_id) REFERENCES habitats(id),
+    monstro_id INT,
+    FOREIGN KEY (monstro_id) REFERENCES monstros(id)
+);
+
+CREATE TABLE tamanho_monstro (
+	id INT PRIMARY KEY AUTO_INCREMENT,
+    tamanho_id INT,
+    FOREIGN KEY (tamanho_id) REFERENCES tamanho(id),
     monstro_id INT,
     FOREIGN KEY (monstro_id) REFERENCES monstros(id)
 );
