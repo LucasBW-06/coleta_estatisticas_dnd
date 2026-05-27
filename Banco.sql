@@ -27,11 +27,6 @@ CREATE TABLE deslocamento (
     deslocamento VARCHAR(25)
 );
 
-CREATE TABLE subdeslocamento (
-	id INT PRIMARY KEY AUTO_INCREMENT,
-    subdeslocamento VARCHAR(25)
-);
-
 CREATE TABLE pericias (
 	id INT PRIMARY KEY AUTO_INCREMENT,
     pericia VARCHAR(25)
@@ -88,7 +83,6 @@ CREATE TABLE monstros (
     sabedoria INT,
     carisma INT,
     nivel_desafio VARCHAR(25),
-    link VARCHAR(250),
     fonte VARCHAR(150)
 );
 

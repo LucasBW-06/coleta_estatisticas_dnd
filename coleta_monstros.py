@@ -30,6 +30,16 @@ tamanhos = {
     "G": "Gargantuan"
 }
 
+alinhamentos = {
+    "A": "Any",
+    "U": "Unaligned",
+    "N": "Neutral",
+    "C": "Chaotic",
+    "L": "Lawful",
+    "G": "Good",
+    "E": "Evil"
+}
+
 def get_or_create(valor, tabela, coluna):
     if valor is None:
         return None
@@ -80,3 +90,57 @@ for key in abv:
                 dados["nivel_desafio"] = nd.get("cr")
 
             dados["fonte"] = abv["key"]
+            
+            type = monstro.get("type")
+            
+            if isinstance(type, str):
+                dados["tipo"] = type
+            else:
+                tipo = type.get("type")
+                subtipo = type.get("tags")
+                if isinstance(subtipo, list):
+                    subtipo = subtipo[0]
+                else:
+                    subtipo = subtipo.get("tag")
+                
+                if tipo == "swarm":
+                    temp = subtipo
+                    subtipo = tipo
+                    tipo = temp
+                    
+                dados["tipo"] = get_or_create(tipo, "tipo", "tipo")
+                dados["subtipo"] = get_or_create(subtipo, "subtipo", "subtipo")
+                
+            alinhamento = monstro.get("alignment")
+            
+            monstro_id = ""
+            with engine.begin() as conn:
+                result = conn.execute(
+                    insert(monstros),
+                    dados
+                )
+                monstros_id = result.inserted_primary_key[0]
+                
+                conn.commit()
+                conn.close()
+            
+            
+            with engine.begin() as conn:
+                deslocamento = monstro.get("speed")
+                for i in deslocamento:
+                    dis = ''
+                    if isinstance(deslocamento[i], int):
+                        dis = deslocamento[i]
+                    else:
+                        dis = deslocamento[i]["number"]
+                    
+                    dis = dis/5
+                    
+                    des = get_or_create(i, "deslocamento", "deslocamento")
+                    
+                    conn.execute(
+                        insert("deslocamento_monstro").values({"deslocamento_id": des, "monstro_id": monstro_id, "distancia": dis})
+                    )
+                    
+                
+                
