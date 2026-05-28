@@ -2,27 +2,27 @@ DROP DATABASE estatisticas_dnd;
 CREATE DATABASE estatisticas_dnd;
 USE estatisticas_dnd;
 
-CREATE TABLE tamanho (
+CREATE TABLE tamanhos (
 	id INT PRIMARY KEY AUTO_INCREMENT,
     tamanho VARCHAR(25) NOT NULL
 );
 
-CREATE TABLE tipo (
+CREATE TABLE tipos (
 	id INT PRIMARY KEY AUTO_INCREMENT,
     tipo VARCHAR(25)
 );
 
-CREATE TABLE subtipo (
+CREATE TABLE subtipos (
 	id INT PRIMARY KEY AUTO_INCREMENT,
     subtipo VARCHAR(25)
 );
 
-CREATE TABLE alinhamento (
+CREATE TABLE alinhamentos (
 	id INT PRIMARY KEY AUTO_INCREMENT,
-    tipo VARCHAR(25)
+    alinhamento VARCHAR(25)
 );
 
-CREATE TABLE deslocamento (
+CREATE TABLE deslocamentos (
 	id INT PRIMARY KEY AUTO_INCREMENT,
     deslocamento VARCHAR(25)
 );
@@ -71,9 +71,9 @@ CREATE TABLE monstros (
 	id INT PRIMARY KEY AUTO_INCREMENT,
     nome VARCHAR(150),
     tipo_id INT,
-    FOREIGN KEY (tipo_id) REFERENCES tipo(id),
+    FOREIGN KEY (tipo_id) REFERENCES tipos(id),
     subtipo_id INT,
-    FOREIGN KEY (subtipo_id) REFERENCES subtipo(id),
+    FOREIGN KEY (subtipo_id) REFERENCES subtipos(id),
     classe_armadura INT,
     pontos_vida INT,
     forca INT,
@@ -89,7 +89,7 @@ CREATE TABLE monstros (
 CREATE TABLE deslocamento_monstro (
 	id INT PRIMARY KEY AUTO_INCREMENT,
     deslocamento_id INT,
-    FOREIGN KEY (deslocamento_id) REFERENCES deslocamento(id),
+    FOREIGN KEY (deslocamento_id) REFERENCES deslocamentos(id),
     monstro_id INT,
     FOREIGN KEY (monstro_id) REFERENCES monstros(id),
     distancia INT
@@ -106,7 +106,7 @@ CREATE TABLE pericia_monstro (
 CREATE TABLE alinhamento_monstro (
 	id INT PRIMARY KEY AUTO_INCREMENT,
     alinhamento_id INT,
-    FOREIGN KEY (alinhamento_id) REFERENCES alinhamento(id),
+    FOREIGN KEY (alinhamento_id) REFERENCES alinhamentos(id),
     monstro_id INT,
     FOREIGN KEY (monstro_id) REFERENCES monstros(id)
 );
@@ -171,7 +171,7 @@ CREATE TABLE habitat_monstro (
 CREATE TABLE tamanho_monstro (
 	id INT PRIMARY KEY AUTO_INCREMENT,
     tamanho_id INT,
-    FOREIGN KEY (tamanho_id) REFERENCES tamanho(id),
+    FOREIGN KEY (tamanho_id) REFERENCES tamanhos(id),
     monstro_id INT,
     FOREIGN KEY (monstro_id) REFERENCES monstros(id)
 );
