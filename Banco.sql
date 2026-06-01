@@ -32,24 +32,14 @@ CREATE TABLE pericias (
     pericia VARCHAR(25)
 );
 
-CREATE TABLE resistencias (
+CREATE TABLE condicoes (
 	id INT PRIMARY KEY AUTO_INCREMENT,
-    resistencia VARCHAR(25)
+    condicao VARCHAR(25)
 );
 
-CREATE TABLE vulnerabilidades (
+CREATE TABLE danos (
 	id INT PRIMARY KEY AUTO_INCREMENT,
-    vulnerabilidade VARCHAR(25)
-);
-
-CREATE TABLE imunidades_dano (
-	id INT PRIMARY KEY AUTO_INCREMENT,
-    imunidade VARCHAR(25)
-);
-
-CREATE TABLE imunidades_condicao (
-	id INT PRIMARY KEY AUTO_INCREMENT,
-    imunidade VARCHAR(25)
+    dano VARCHAR(25)
 );
 
 CREATE TABLE sentidos (
@@ -113,32 +103,32 @@ CREATE TABLE alinhamento_monstro (
 
 CREATE TABLE resistencia_monstro (
 	id INT PRIMARY KEY AUTO_INCREMENT,
-    resistencia_id INT,
-    FOREIGN KEY (resistencia_id) REFERENCES resistencias(id),
+    dano_id INT,
+    FOREIGN KEY (dano_id) REFERENCES danos(id),
     monstro_id INT,
     FOREIGN KEY (monstro_id) REFERENCES monstros(id)
 );
 
 CREATE TABLE vulnerabilidade_monstro (
 	id INT PRIMARY KEY AUTO_INCREMENT,
-    vulnerabilidade_id INT,
-    FOREIGN KEY (vulnerabilidade_id) REFERENCES vulnerabilidades(id),
+    dano_id INT,
+    FOREIGN KEY (dano_id) REFERENCES danos(id),
     monstro_id INT,
     FOREIGN KEY (monstro_id) REFERENCES monstros(id)
 );
 
 CREATE TABLE imunidade_dano_monstro (
 	id INT PRIMARY KEY AUTO_INCREMENT,
-    imunidade_id INT,
-    FOREIGN KEY (imunidade_id) REFERENCES imunidades_dano(id),
+    dano_id INT,
+    FOREIGN KEY (dano_id) REFERENCES danos(id),
     monstro_id INT,
     FOREIGN KEY (monstro_id) REFERENCES monstros(id)
 );
 
 CREATE TABLE imunidade_condicao_monstro (
 	id INT PRIMARY KEY AUTO_INCREMENT,
-    imunidade_id INT,
-    FOREIGN KEY (imunidade_id) REFERENCES imunidades_condicao(id),
+    condicao_id INT,
+    FOREIGN KEY (condicao_id) REFERENCES condicoes(id),
     monstro_id INT,
     FOREIGN KEY (monstro_id) REFERENCES monstros(id)
 );

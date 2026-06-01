@@ -1,7 +1,7 @@
 import requests
 import json
 import re
-from sqlalchemy import create_engine, select, MetaData, insert, update
+from sqlalchemy import create_engine, select, MetaData, insert, text
 
 username = "root"
 password = "admin"
@@ -10,7 +10,7 @@ port = 3306
 database = "estatisticas_dnd"
 
 connection_string = f"mysql+pymysql://{username}:{password}@{host}:{port}/{database}"
-engine = create_engine(connection_string)
+engine = create_engine(connection_string, echo=False)
 
 metadata = MetaData()
 
@@ -71,8 +71,6 @@ def bring_alignment(alinhamento):
         aux.append(alinhamentos_aux[i])
     return " ".join(aux)
 
-
-print("iniciando...")
 for key in abv:
     url = f"https://5e.tools/data/bestiary/bestiary-{key.lower()}.json"
     response = requests.get(url)
@@ -82,8 +80,8 @@ for key in abv:
         for monstro in monstros:
             for i in monstro:
                 print(f"{i}: {monstro[i]}")
-            print("")
             
+            print("")
             dados = {}
             dados["nome"] = monstro.get("name")
             dados["forca"] = monstro.get("str")
@@ -113,16 +111,16 @@ for key in abv:
 
             dados["fonte"] = abv[key]
             
-            type = monstro.get("type")
+            tipo_c = monstro.get("type")
             
             tamanhos = None
-            if type:
-                if isinstance(type, str):
-                    dados["tipo"] = get_or_create(type, "tipos", "tipo")
+            if tipo_c:
+                if isinstance(tipo_c, str):
+                    dados["tipo_id"] = get_or_create(tipo_c, "tipos", "tipo")
                 else:
-                    tipo = type.get("type")
-                    subtipo = type.get("tags")
-                    swarmSize = type.get("swarmSize")
+                    tipo = tipo_c.get("type")
+                    subtipo = tipo_c.get("tags")
+                    swarmSize = tipo_c.get("swarmSize")
                     if swarmSize:
                         subtipo = "swarm"
                         tamanhos = swarmSize
@@ -140,22 +138,22 @@ for key in abv:
                             temp = subtipo
                             subtipo = tipo
                             tipo = temp
-                            
-                        dados["tipo"] = get_or_create(tipo, "tipos", "tipo")
-                        dados["subtipo"] = get_or_create(subtipo, "subtipos", "subtipo")
+                        
+                        dados["tipo_id"] = get_or_create(tipo, "tipos", "tipo")
+                        dados["subtipo_id"] = get_or_create(subtipo, "subtipos", "subtipo")
             
             monstro_id = ""
             with engine.begin() as conn:
+                print("")
                 result = conn.execute(
                     insert(monstros_tabela),
                     dados
                 )
                 monstro_id = result.inserted_primary_key[0]
-                
+
                 conn.commit()
                 conn.close()
-            
-            
+
             with engine.begin() as conn:
                 deslocamento = monstro.get("speed")
                 if deslocamento:
@@ -212,72 +210,72 @@ for key in abv:
                 if resistencias:
                     for i in resistencias:
                         if isinstance(i, str):
-                            resi = get_or_create(i, "resistencias", "resistencia")
+                            dano = get_or_create(i, "danos", "dano")
                             conn.execute(
-                                insert(metadata.tables["resistencia_monstro"]).values({"resistencia_id": resi, "monstro_id": monstro_id})
+                                insert(metadata.tables["resistencia_monstro"]).values({"dano_id": dano, "monstro_id": monstro_id})
                             )
                         elif i.get("resist"):
                             for j in i["resist"]:
                                 if isinstance(j, str):
-                                    resi = get_or_create(j, "resistencias", "resistencia")
+                                    dano = get_or_create(j, "danos", "dano")
                                     conn.execute(
-                                        insert(metadata.tables["resistencia_monstro"]).values({"resistencia_id": resi, "monstro_id": monstro_id})
+                                        insert(metadata.tables["resistencia_monstro"]).values({"dano_id": dano, "monstro_id": monstro_id})
                                     )
                                 elif j.get("resist"):
                                     for k in j["resist"]:
-                                        resi = get_or_create(k, "resistencias", "resistencia")
+                                        dano = get_or_create(k, "danos", "dano")
                                         conn.execute(
-                                            insert(metadata.tables["resistencia_monstro"]).values({"resistencia_id": resi, "monstro_id": monstro_id})
+                                            insert(metadata.tables["resistencia_monstro"]).values({"dano_id": dano, "monstro_id": monstro_id})
                                         )
                 
                 vulnerabilidades = monstro.get("vulnerable")
                 if vulnerabilidades:
                     for i in vulnerabilidades:
                         if isinstance(i, str):
-                            vul = get_or_create(i, "vulnerabilidades", "vulnerabilidade")
+                            dano = get_or_create(i, "danos", "dano")
                             conn.execute(
-                                insert(metadata.tables["vulnerabilidade_monstro"]).values({"vulnerabilidade_id": vul, "monstro_id": monstro_id})
+                                insert(metadata.tables["vulnerabilidade_monstro"]).values({"dano_id": dano, "monstro_id": monstro_id})
                             )
                         else:
                             for j in i["vulnerable"]:
-                                vul = get_or_create(j, "vulnerabilidades", "vulnerabilidade")
+                                dano = get_or_create(j, "danos", "dano")
                                 conn.execute(
-                                    insert(metadata.tables["vulnerabilidade_monstro"]).values({"vulnerabilidade_id": vul, "monstro_id": monstro_id})
+                                    insert(metadata.tables["vulnerabilidade_monstro"]).values({"dano_id": dano, "monstro_id": monstro_id})
                                 )
 
                 imunidades_dano = monstro.get("immune")
                 if imunidades_dano:
                     for i in imunidades_dano:
                         if isinstance(i, str):
-                            imu = get_or_create(i, "imunidades_dano", "imunidade")
+                            dano = get_or_create(i, "danos", "dano")
                             conn.execute(
-                                insert(metadata.tables["imunidade_dano_monstro"]).values({"imunidade_id": imu, "monstro_id": monstro_id})
+                                insert(metadata.tables["imunidade_dano_monstro"]).values({"dano_id": dano, "monstro_id": monstro_id})
                             )
                         else:
                             aux = i.get("immune")
                             if aux:
                                 for j in aux:
-                                    imu = get_or_create(j, "imunidades_dano", "imunidade")
+                                    dano = get_or_create(j, "danos", "dano")
                                     conn.execute(
-                                        insert(metadata.tables["imunidade_dano_monstro"]).values({"imunidade_id": imu, "monstro_id": monstro_id})
+                                        insert(metadata.tables["imunidade_dano_monstro"]).values({"dano_id": dano, "monstro_id": monstro_id})
                                     )
 
                 imunidades_condicao = monstro.get("conditionImmune")
                 if imunidades_condicao:
                     for i in imunidades_condicao:
                         if isinstance(i, str):
-                            imu = get_or_create(i, "imunidades_condicao", "imunidade")
+                            condicao = get_or_create(i, "condicoes", "condicao")
                             conn.execute(
-                                insert(metadata.tables["imunidade_condicao_monstro"]).values({"imunidade_id": imu, "monstro_id": monstro_id})
+                                insert(metadata.tables["imunidade_condicao_monstro"]).values({"condicao_id": condicao, "monstro_id": monstro_id})
                             )
                         else:
                             imuni = i.get("immune")
                             if not imuni:
                                 imuni = i.get("conditionImmune")
                             for j in imuni:
-                                imu = get_or_create(j, "imunidades_condicao", "imunidade")
+                                condicao = get_or_create(j, "condicoes", "condicao")
                                 conn.execute(
-                                    insert(metadata.tables["imunidade_condicao_monstro"]).values({"imunidade_id": imu, "monstro_id": monstro_id})
+                                    insert(metadata.tables["imunidade_condicao_monstro"]).values({"condicao_id": condicao, "monstro_id": monstro_id})
                                 )
                 
                 idiomas = monstro.get("languages")
