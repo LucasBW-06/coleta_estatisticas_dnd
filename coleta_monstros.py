@@ -1,5 +1,6 @@
 import requests
 import json
+import re
 from sqlalchemy import create_engine, select, MetaData, insert, update
 
 username = "root"
@@ -63,11 +64,15 @@ def get_or_create(valor, tabela, coluna):
         return result.inserted_primary_key[0]
 
 def bring_alignment(alinhamento):
+    if len(alinhamento) > 1:
+        return None
     aux = []
     for i in alinhamento:
         aux.append(alinhamentos_aux[i])
     return " ".join(aux)
 
+
+print("iniciando...")
 for key in abv:
     url = f"https://5e.tools/data/bestiary/bestiary-{key.lower()}.json"
     response = requests.get(url)
@@ -89,51 +94,55 @@ for key in abv:
             dados["carisma"] = monstro.get("cha")
 
             ca = monstro.get("ac")
-            print(ca)
-            print("")
-            if isinstance(ca[0], int):
-                dados["classe_armadura"] = ca[0]
-            else:
-                dados["classe_armadura"] = ca[0].get("ac")
-
-            dados["pontos_vida"] = monstro.get("hp").get("average")
+            if ca:
+                if isinstance(ca[0], int):
+                    dados["classe_armadura"] = ca[0]
+                else:
+                    dados["classe_armadura"] = ca[0].get("ac")
+            
+            pv = monstro.get("hp")
+            if pv:
+                dados["pontos_vida"] = pv.get("average")
 
             nd = monstro.get("cr")
-            if isinstance(nd, str):
-                dados["nivel_desafio"] = nd
-            else:
-                dados["nivel_desafio"] = nd.get("cr")
+            if nd:
+                if isinstance(nd, str):
+                    dados["nivel_desafio"] = nd
+                else:
+                    dados["nivel_desafio"] = nd.get("cr")
 
             dados["fonte"] = abv[key]
             
             type = monstro.get("type")
             
             tamanhos = None
-            if isinstance(type, str):
-                dados["tipo"] = get_or_create(type, "tipos", "tipo")
-            else:
-                tipo = type.get("type")
-                subtipo = type.get("tags")
-                swarmSize = type.get("swarmSize")
-                if swarmSize:
-                    subtipo = "swarm"
-                    tamanhos = swarmSize
+            if type:
+                if isinstance(type, str):
+                    dados["tipo"] = get_or_create(type, "tipos", "tipo")
+                else:
+                    tipo = type.get("type")
+                    subtipo = type.get("tags")
+                    swarmSize = type.get("swarmSize")
+                    if swarmSize:
+                        subtipo = "swarm"
+                        tamanhos = swarmSize
 
-                if isinstance(subtipo, list):
-                    subtipo = subtipo[0]
-                elif isinstance(subtipo, dict):
-                    subtipo = subtipo.get("tags")
+                    if not isinstance(tipo, dict):
+                        if isinstance(subtipo, list):
+                            subtipo = subtipo[0]
+                        elif isinstance(subtipo, dict):
+                            subtipo = subtipo.get("tags")
 
-                if isinstance(subtipo, dict):
-                        subtipo = subtipo.get("tag")
+                        if isinstance(subtipo, dict):
+                                subtipo = subtipo.get("tag")
 
-                if tipo == "swarm":
-                    temp = subtipo
-                    subtipo = tipo
-                    tipo = temp
-                    
-                dados["tipo"] = get_or_create(tipo, "tipos", "tipo")
-                dados["subtipo"] = get_or_create(subtipo, "subtipos", "subtipo")
+                        if tipo == "swarm":
+                            temp = subtipo
+                            subtipo = tipo
+                            tipo = temp
+                            
+                        dados["tipo"] = get_or_create(tipo, "tipos", "tipo")
+                        dados["subtipo"] = get_or_create(subtipo, "subtipos", "subtipo")
             
             monstro_id = ""
             with engine.begin() as conn:
@@ -149,39 +158,47 @@ for key in abv:
             
             with engine.begin() as conn:
                 deslocamento = monstro.get("speed")
-                for i in deslocamento:
-                    dis = ''
-                    if isinstance(deslocamento[i], int):
-                        dis = deslocamento[i]
-                    else:
-                        dis = deslocamento[i]["number"]
-                    
-                    dis = dis/5
-                    
-                    des = get_or_create(i, "deslocamentos", "deslocamento")
-                    
-                    conn.execute(
-                        insert(metadata.tables["deslocamento_monstro"]).values({"deslocamento_id": des, "monstro_id": monstro_id, "distancia": dis})
-                    )
+                if deslocamento:
+                    for i in deslocamento:
+                        dis = ''
+                        if isinstance(deslocamento[i], int):
+                            dis = deslocamento[i]
+                        else:
+                            dis = deslocamento[i].get("number")
+                        
+                        if dis:
+                            dis = dis/5
+                            
+                            des = get_or_create(i, "deslocamentos", "deslocamento")
+                            
+                            conn.execute(
+                                insert(metadata.tables["deslocamento_monstro"]).values({"deslocamento_id": des, "monstro_id": monstro_id, "distancia": dis})
+                            )
                 
                 alinhamento = monstro.get("alignment")
                 if alinhamento:
                     if isinstance(alinhamento, str):
                         alinhamento = bring_alignment(alinhamento)
-                        ali = get_or_create(alinhamento, "alinhamentos", "alinhamento")
-                        conn.execute(
-                            insert(metadata.tables["alinhamento_monstro"]).values({"alinhamento_id": ali, "monstro_id": monstro_id})
-                        )
-                    else:
-                        for i in alinhamento:
-                            if isinstance(i, dict):
-                                ali = bring_alignment(i["alignment"])
-                            else:
-                                ali = bring_alignment(i)
-                            ali = get_or_create(ali, "alinhamentos", "alinhamento")
+                        if alinhamento:
+                            ali = get_or_create(alinhamento, "alinhamentos", "alinhamento")
                             conn.execute(
                                 insert(metadata.tables["alinhamento_monstro"]).values({"alinhamento_id": ali, "monstro_id": monstro_id})
                             )
+                    else:
+                        for i in alinhamento:
+                            if isinstance(i, dict):
+                                aux = i.get("alignment")
+                                if not aux:
+                                    continue
+                                ali = bring_alignment(aux)
+                            else:
+                                ali = bring_alignment(i)
+                            
+                            if ali:
+                                ali = get_or_create(ali, "alinhamentos", "alinhamento")
+                                conn.execute(
+                                    insert(metadata.tables["alinhamento_monstro"]).values({"alinhamento_id": ali, "monstro_id": monstro_id})
+                                )
                 
                 pericias = monstro.get("skill")
                 if pericias:
@@ -201,10 +218,17 @@ for key in abv:
                             )
                         elif i.get("resist"):
                             for j in i["resist"]:
-                                resi = get_or_create(j, "resistencias", "resistencia")
-                                conn.execute(
-                                    insert(metadata.tables["resistencia_monstro"]).values({"resistencia_id": resi, "monstro_id": monstro_id})
-                                )
+                                if isinstance(j, str):
+                                    resi = get_or_create(j, "resistencias", "resistencia")
+                                    conn.execute(
+                                        insert(metadata.tables["resistencia_monstro"]).values({"resistencia_id": resi, "monstro_id": monstro_id})
+                                    )
+                                elif j.get("resist"):
+                                    for k in j["resist"]:
+                                        resi = get_or_create(k, "resistencias", "resistencia")
+                                        conn.execute(
+                                            insert(metadata.tables["resistencia_monstro"]).values({"resistencia_id": resi, "monstro_id": monstro_id})
+                                        )
                 
                 vulnerabilidades = monstro.get("vulnerable")
                 if vulnerabilidades:
@@ -230,11 +254,13 @@ for key in abv:
                                 insert(metadata.tables["imunidade_dano_monstro"]).values({"imunidade_id": imu, "monstro_id": monstro_id})
                             )
                         else:
-                            for j in i["immune"]:
-                                imu = get_or_create(j, "imunidades_dano", "imunidade")
-                                conn.execute(
-                                    insert(metadata.tables["imunidade_dano_monstro"]).values({"imunidade_id": imu, "monstro_id": monstro_id})
-                                )
+                            aux = i.get("immune")
+                            if aux:
+                                for j in aux:
+                                    imu = get_or_create(j, "imunidades_dano", "imunidade")
+                                    conn.execute(
+                                        insert(metadata.tables["imunidade_dano_monstro"]).values({"imunidade_id": imu, "monstro_id": monstro_id})
+                                    )
 
                 imunidades_condicao = monstro.get("conditionImmune")
                 if imunidades_condicao:
@@ -245,7 +271,10 @@ for key in abv:
                                 insert(metadata.tables["imunidade_condicao_monstro"]).values({"imunidade_id": imu, "monstro_id": monstro_id})
                             )
                         else:
-                            for j in i["immune"]:
+                            imuni = i.get("immune")
+                            if not imuni:
+                                imuni = i.get("conditionImmune")
+                            for j in imuni:
                                 imu = get_or_create(j, "imunidades_condicao", "imunidade")
                                 conn.execute(
                                     insert(metadata.tables["imunidade_condicao_monstro"]).values({"imunidade_id": imu, "monstro_id": monstro_id})
@@ -264,10 +293,11 @@ for key in abv:
                 if sentidos:
                     for i in sentidos:
                         lista = i.split()
-                        sen = get_or_create(lista[0], "sentidos", "sentido")
-                        conn.execute(
-                            insert(metadata.tables["sentido_monstro"]).values({"sentido_id": sen, "monstro_id": monstro_id, "distancia": int(lista[1])/5})
-                        )
+                        if len(lista) <= 3:
+                            sen = get_or_create(lista[0], "sentidos", "sentido")
+                            conn.execute(
+                                insert(metadata.tables["sentido_monstro"]).values({"sentido_id": sen, "monstro_id": monstro_id, "distancia": int(re.sub(r'\D', '', lista[1]) )/5})
+                            )
 
                 habitats = monstro.get("environment")
                 if habitats:
