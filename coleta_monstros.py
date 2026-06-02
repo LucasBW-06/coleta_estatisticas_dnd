@@ -317,5 +317,3 @@ for key in abv:
 
                 conn.commit()
                 conn.close()
-            print("OK 2")
-        print("OK 1")

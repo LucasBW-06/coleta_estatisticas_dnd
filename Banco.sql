@@ -57,6 +57,11 @@ CREATE TABLE habitats (
     habitat VARCHAR(25)
 );
 
+CREATE TABLE escolas (
+	id INT PRIMARY KEY AUTO_INCREMENT,
+    escola VARCHAR(25)
+);
+
 CREATE TABLE monstros (
 	id INT PRIMARY KEY AUTO_INCREMENT,
     nome VARCHAR(150),
@@ -74,6 +79,14 @@ CREATE TABLE monstros (
     carisma INT,
     nivel_desafio VARCHAR(25),
     fonte VARCHAR(150)
+);
+
+CREATE TABLE magias (
+	id INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(150),
+    escola_id INT,
+    FOREIGN KEY (escola_id) REFERENCES escolas(id),
+    nivel VARCHAR(3)
 );
 
 CREATE TABLE deslocamento_monstro (
@@ -164,4 +177,13 @@ CREATE TABLE tamanho_monstro (
     FOREIGN KEY (tamanho_id) REFERENCES tamanhos(id),
     monstro_id INT,
     FOREIGN KEY (monstro_id) REFERENCES monstros(id)
+);
+
+CREATE TABLE dano_magia (
+	id INT PRIMARY KEY AUTO_INCREMENT,
+    magia_id INT,
+    FOREIGN KEY (magia_id) REFERENCES magias(id),
+    dano_id INT,
+    FOREIGN KEY (dano_id) REFERENCES danos(id),
+    media DECIMAL(3, 1)
 );
