@@ -54,7 +54,7 @@ CREATE TABLE idiomas (
 
 CREATE TABLE habitats (
 	id INT PRIMARY KEY AUTO_INCREMENT,
-    habitat VARCHAR(25)
+    habitat VARCHAR(50)
 );
 
 CREATE TABLE escolas (
@@ -119,7 +119,8 @@ CREATE TABLE resistencia_monstro (
     dano_id INT,
     FOREIGN KEY (dano_id) REFERENCES danos(id),
     monstro_id INT,
-    FOREIGN KEY (monstro_id) REFERENCES monstros(id)
+    FOREIGN KEY (monstro_id) REFERENCES monstros(id),
+    nao_magico BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE vulnerabilidade_monstro (
@@ -135,7 +136,8 @@ CREATE TABLE imunidade_dano_monstro (
     dano_id INT,
     FOREIGN KEY (dano_id) REFERENCES danos(id),
     monstro_id INT,
-    FOREIGN KEY (monstro_id) REFERENCES monstros(id)
+    FOREIGN KEY (monstro_id) REFERENCES monstros(id),
+    nao_magico BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE imunidade_condicao_monstro (
