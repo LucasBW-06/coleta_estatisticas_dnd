@@ -1,4 +1,5 @@
 import requests
+import time
 import json
 import re
 from sqlalchemy import create_engine, select, MetaData, insert, text
@@ -74,7 +75,16 @@ def bring_alignment(alinhamento):
 def execute():
     for key in abv:
         url = f"https://5e.tools/data/bestiary/bestiary-{key.lower()}.json"
-        response = requests.get(url)
+        headers = {
+            "User-Agent": (
+                "Mozilla/5.0 (X11; Linux x86_64) "
+                "AppleWebKit/537.36 "
+                "(KHTML, like Gecko) "
+                "Chrome/137.0 Safari/537.36"
+            )
+        }
+
+        response = requests.get(url, headers=headers, timeout=30)
         if response.status_code != 404:
             data = response.json()
             monstros = data["monster"]
@@ -83,6 +93,7 @@ def execute():
                     print(f"{i}: {monstro[i]}")
                 
                 print("")
+                
                 dados = {}
                 dados["nome"] = monstro.get("name")
                 dados["forca"] = monstro.get("str")
@@ -330,3 +341,8 @@ def execute():
 
                     conn.commit()
                     conn.close()
+                    
+                    print("inserido")
+        time.sleep(5)
+                    
+execute()

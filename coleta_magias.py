@@ -1,5 +1,5 @@
 import requests
-import json
+import time
 import re
 from sqlalchemy import create_engine, select, MetaData, insert, text
 
@@ -64,12 +64,24 @@ def average_damage(formula):
 
 def execute():
     url = "https://5e.tools/data/spells/spells-phb.json"
-    response = requests.get(url)
+    headers = {
+        "User-Agent": (
+            "Mozilla/5.0 (X11; Linux x86_64) "
+            "AppleWebKit/537.36 "
+            "(KHTML, like Gecko) "
+            "Chrome/137.0 Safari/537.36"
+        )
+    }
+
+    response = requests.get(url, headers=headers, timeout=30)
     data = response.json()
     magias = data["spell"]
     for magia in magias:
         for i in magia:
             print(f"{i}: {magia[i]}")
+            
+        print("")
+        
         dados = {}
         dados["nome"] = magia.get("name")
         dados["nivel"] = str(magia.get("level"))
@@ -116,3 +128,6 @@ def execute():
 
             conn.commit()
             conn.close()
+        time.sleep(5)
+            
+execute()
