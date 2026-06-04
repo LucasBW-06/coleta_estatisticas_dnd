@@ -4,8 +4,13 @@ from db import engine
 def read(q):
     return pd.read_sql(q, engine)
 
+def quantidades():
+    return read("""
+        SELECT
+        (SELECT COUNT(*) FROM monstros) AS total_monstros,
+        (SELECT COUNT(*) FROM magias) AS total_magias;
+    """)
 
-# 1 habitat
 def monstros_por_habitat():
     return read("""
         SELECT h.habitat, COUNT(*) AS total
@@ -14,8 +19,7 @@ def monstros_por_habitat():
         JOIN habitats h ON hm.habitat_id = h.id
         GROUP BY h.habitat
     """)
-
-# 2 tipo
+    
 def monstros_por_tipo():
     return read("""
         SELECT t.tipo, COUNT(*) AS total
@@ -24,7 +28,6 @@ def monstros_por_tipo():
         GROUP BY t.tipo
     """)
 
-# 3 alinhamento
 def monstros_por_alinhamento():
     return read("""
         SELECT a.alinhamento, COUNT(*) AS total
@@ -34,7 +37,6 @@ def monstros_por_alinhamento():
         GROUP BY a.alinhamento
     """)
 
-# 4 tamanho
 def monstros_por_tamanho():
     return read("""
         SELECT t.tamanho, COUNT(*) AS total
@@ -44,7 +46,6 @@ def monstros_por_tamanho():
         GROUP BY t.tamanho
     """)
 
-# 4 vulnerabilidade
 def vulnerabilidade():
     return read("""
         SELECT d.dano, COUNT(DISTINCT vm.monstro_id) AS total
@@ -55,7 +56,6 @@ def vulnerabilidade():
         LIMIT 10
     """)
 
-# 5 resistência
 def resistencia():
     return read("""
         SELECT 
@@ -70,7 +70,6 @@ def resistencia():
         LIMIT 10
     """)
 
-# 6 imunidade
 def imunidade():
     return read("""
         SELECT 
@@ -85,7 +84,6 @@ def imunidade():
         LIMIT 10
     """)
 
-# base para ranking completo
 def tabela_danos():
     return read("""
         SELECT 
@@ -126,7 +124,6 @@ def tabela_danos():
         ) i ON i.dano_id = d.id;
     """)
 
-# magias
 def magias_escola():
     return read("""
         SELECT e.escola, COUNT(*) total

@@ -8,90 +8,147 @@ st.set_page_config(page_title="Dashboard D&D", layout="wide")
 
 st.title("📊 Estatísticas D&D - Dashboard")
 
+df = q.quantidades()
+
+st.markdown("""
+<style>
+.cards-container {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 20px;
+}
+
+.card {
+    background-color: #262730;
+    padding: 25px;
+    border-radius: 12px;
+    width: 220px;
+    text-align: center;
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.3);
+}
+
+.card-title {
+    font-size: 18px;
+    color: #BBBBBB;
+}
+
+.card-value {
+    font-size: 42px;
+    font-weight: bold;
+    color: white;
+}
+</style>
+""", unsafe_allow_html=True)
+
+total_monstros = int(df["total_monstros"].iloc[0])
+total_magias = int(df["total_magias"].iloc[0])
+
+st.markdown(f"""
+<div class="cards-container">
+    <div class="card">
+        <div class="card-title">🐉 Monstros</div>
+        <div class="card-value">{total_monstros}</div>
+    </div>
+<div>
+<div class="cards-container">
+    <div class="card">
+        <div class="card-title">✨ Magias</div>
+        <div class="card-value">{total_magias}</div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
+col1, col2 = st.columns([1, 1])
+
 # =========================
 # 1 HABITATS
 # =========================
-st.header("1) Monstros por Habitat")
+with col1:
+    st.header("1) Monstros por Habitat")
 
-df = q.monstros_por_habitat()
+    df = q.monstros_por_habitat()
 
-df["percentual"] = df["total"] / df["total"].sum() * 100
+    df["percentual"] = df["total"] / df["total"].sum() * 100
 
-chart = alt.Chart(df).mark_arc().encode(
-    theta="total",
-    color=alt.Color("habitat", title="Habitat"),
-    tooltip=[  
-    alt.Tooltip("habitat", title="Habitat"),
-    alt.Tooltip("total", title="Nº de Monstros"),
-    alt.Tooltip("percentual", title="% do Total", format=".2f")]
-)
+    chart = alt.Chart(df).mark_arc().encode(
+        theta="total",
+        color=alt.Color("habitat", title="Habitat"),
+        tooltip=[  
+        alt.Tooltip("habitat", title="Habitat"),
+        alt.Tooltip("total", title="Nº de Monstros"),
+        alt.Tooltip("percentual", title="% do Total", format=".2f")]
+    )
 
-st.altair_chart(chart, use_container_width=True)
+    st.altair_chart(chart, use_container_width=True)
 
 # =========================
 # 2 TIPOS
 # =========================
-st.header("2) Monstros por Tipo")
+with col2:
+    st.header("2) Monstros por Tipo")
 
-df = q.monstros_por_tipo()
+    df = q.monstros_por_tipo()
 
-df["percentual"] = df["total"] / df["total"].sum() * 100
+    df["percentual"] = df["total"] / df["total"].sum() * 100
 
-chart = alt.Chart(df).mark_arc().encode(
-    theta="total",
-    color=alt.Color("tipo", title="Tipo"),
-    tooltip=[  
-    alt.Tooltip("tipo", title="Tipo"),
-    alt.Tooltip("total", title="Nº de Monstros"),
-    alt.Tooltip("percentual", title="% do Total", format=".2f")]
-)
+    chart = alt.Chart(df).mark_arc().encode(
+        theta="total",
+        color=alt.Color("tipo", title="Tipo"),
+        tooltip=[  
+        alt.Tooltip("tipo", title="Tipo"),
+        alt.Tooltip("total", title="Nº de Monstros"),
+        alt.Tooltip("percentual", title="% do Total", format=".2f")]
+    )
 
-st.altair_chart(chart, use_container_width=True)
+    st.altair_chart(chart, use_container_width=True)
 
 # =========================
 # 3 ALINHAMENTO
 # =========================
-st.header("3) Monstros por Alinhamento")
+with col1:
+    st.header("3) Monstros por Alinhamento")
 
-df = q.monstros_por_alinhamento()
+    df = q.monstros_por_alinhamento()
 
-df["percentual"] = df["total"] / df["total"].sum() * 100
+    df["percentual"] = df["total"] / df["total"].sum() * 100
 
-chart = alt.Chart(df).mark_arc().encode(
-    theta="total",
-    color=alt.Color("alinhamento", title="Alinhamento"),
-    tooltip=[  
-    alt.Tooltip("alinhamento", title="Alinhamento"),
-    alt.Tooltip("total", title="Nº de Monstros"),
-    alt.Tooltip("percentual", title="% do Total", format=".2f")]
-)
+    chart = alt.Chart(df).mark_arc().encode(
+        theta="total",
+        color=alt.Color("alinhamento", title="Alinhamento"),
+        tooltip=[  
+        alt.Tooltip("alinhamento", title="Alinhamento"),
+        alt.Tooltip("total", title="Nº de Monstros"),
+        alt.Tooltip("percentual", title="% do Total", format=".2f")]
+    )
 
-st.altair_chart(chart, use_container_width=True)
+    st.altair_chart(chart, use_container_width=True)
 
 # =========================
 # 4 TAMANHO
 # =========================
-st.header("4) Monstros por Tamanho")
+with col2:
+    st.header("4) Monstros por Tamanho")
 
-df = q.monstros_por_tamanho()
+    df = q.monstros_por_tamanho()
 
-df["percentual"] = df["total"] / df["total"].sum() * 100
+    df["percentual"] = df["total"] / df["total"].sum() * 100
 
-chart = alt.Chart(df).mark_arc().encode(
-    theta="total",
-    color=alt.Color("tamanho", title="Tamanho"),
-    tooltip=[  
-    alt.Tooltip("tamanho", title="Tamanho"),
-    alt.Tooltip("total", title="Nº de Monstros"),
-    alt.Tooltip("percentual", title="% do Total", format=".2f")]
-)
+    chart = alt.Chart(df).mark_arc().encode(
+        theta="total",
+        color=alt.Color("tamanho", title="Tamanho"),
+        tooltip=[  
+        alt.Tooltip("tamanho", title="Tamanho"),
+        alt.Tooltip("total", title="Nº de Monstros"),
+        alt.Tooltip("percentual", title="% do Total", format=".2f")]
+    )
 
-st.altair_chart(chart, use_container_width=True)
+    st.altair_chart(chart, use_container_width=True)
 
 # =========================
 # 4 VULNERABILIDADE
 # =========================
-st.header("4) Top 10 Vulnerabilidades")
+st.header("4) Top vulnerabilidades")
 
 df = q.vulnerabilidade()
 
@@ -108,7 +165,7 @@ st.altair_chart(chart, use_container_width=True)
 # =========================
 # 5 RESISTÊNCIA
 # =========================
-st.header("5) Top 10 Resistências")
+st.header("5) Top resistências")
 
 df = q.resistencia()
 
@@ -151,7 +208,7 @@ st.altair_chart(chart, use_container_width=True)
 # =========================
 # 6 IMUNIDADE
 # =========================
-st.header("6) Top 10 Imunidades")
+st.header("6) Top imunidades")
 
 df = q.imunidade()
 
@@ -195,6 +252,7 @@ st.altair_chart(chart, use_container_width=True)
 # 7 TABELA RANKING
 # =========================
 st.header("7) Ranking de Tipos de Dano")
+st.caption("Score do tipo de dano = Qdt. Vulnerabilidades * Peso vulnerabilidade - Qdt. Resitências * Peso resistência + Qtd. Imunidades * Peso imunidade")
 
 df_rank = q.tabela_danos()
 
@@ -231,59 +289,63 @@ w_r = st.slider("Peso resistência", -1.0, 5.0, 1.0, 0.5)
 w_i = st.slider("Peso imunidade", -1.0, 5.0, 1.0, 0.5)
 
 df_rank["score"] = (
-    df_rank["vulnerabilidade"].rank(ascending=False) * w_v -
-    df_rank["resistencia"].rank(ascending=False) * w_r -
-    df_rank["imunidade"].rank(ascending=False) * w_i
+    df_rank["vulnerabilidade"].rank(ascending=True) * w_v -
+    df_rank["resistencia"].rank(ascending=True) * w_r -
+    df_rank["imunidade"].rank(ascending=True) * w_i
 )
 
-df_rank = df_rank.sort_values("score")
+df_rank = df_rank.sort_values("score", ascending=False)
 
 st.dataframe(df_rank)
+
+col1, col2 = st.columns([1, 1])
 
 # =========================
 # 8 MAGIAS POR ESCOLA
 # =========================
-st.header("8) Magias por Escola")
+with col1:
+    st.header("8) Magias por Escola")
 
-df = q.magias_escola()
+    df = q.magias_escola()
 
-df["percentual"] = df["total"] / df["total"].sum() * 100
+    df["percentual"] = df["total"] / df["total"].sum() * 100
 
-chart = alt.Chart(df).mark_arc().encode(
-    theta="total",
-    color=alt.Color("escola", title="Escola"),
-    tooltip=[  
-    alt.Tooltip("escola", title="Escola"),
-    alt.Tooltip("total", title="Nº de Magias"),
-    alt.Tooltip("percentual", title="% do Total", format=".2f")]
-)
+    chart = alt.Chart(df).mark_arc().encode(
+        theta="total",
+        color=alt.Color("escola", title="Escola"),
+        tooltip=[  
+        alt.Tooltip("escola", title="Escola"),
+        alt.Tooltip("total", title="Nº de Magias"),
+        alt.Tooltip("percentual", title="% do Total", format=".2f")]
+    )
 
-st.altair_chart(chart, use_container_width=True)
+    st.altair_chart(chart, use_container_width=True)
 
 # =========================
 # 9 MAGIAS POR NÍVEL
 # =========================
-st.header("9) Magias por Nível")
+with col2:
+    st.header("9) Magias por Nível")
 
-df = q.magias_nivel()
+    df = q.magias_nivel()
 
-df["percentual"] = df["total"] / df["total"].sum() * 100
+    df["percentual"] = df["total"] / df["total"].sum() * 100
 
-chart = alt.Chart(df).mark_arc().encode(
-    theta="total",
-    color=alt.Color("nivel", title="Nível"),
-    tooltip=[  
-    alt.Tooltip("nivel", title="Nível"),
-    alt.Tooltip("total", title="Nº de Magias"),
-    alt.Tooltip("percentual", title="% do Total", format=".2f")]
-)
+    chart = alt.Chart(df).mark_arc().encode(
+        theta="total",
+        color=alt.Color("nivel", title="Nível"),
+        tooltip=[  
+        alt.Tooltip("nivel", title="Nível"),
+        alt.Tooltip("total", title="Nº de Magias"),
+        alt.Tooltip("percentual", title="% do Total", format=".2f")]
+    )
 
-st.altair_chart(chart, use_container_width=True)
+    st.altair_chart(chart, use_container_width=True)
 
 # =========================
 # 10 MELHORES MAGIAS DO TOP DANO
 # =========================
-st.header("10) Magias mais fortes (ajustado por tipo de dano)")
+st.header("10) Top 10 magias com maior dano médio")
 
 df_magia = q.dano_magia()
 
@@ -321,9 +383,13 @@ df = df.sort_values("media", ascending=False).head(10)
 
 # gráfico
 chart = alt.Chart(df).mark_bar().encode(
-    x="media:Q",
-    y=alt.Y("nome:N", sort="-x"),
-    tooltip=["nome", "dano", "media"]
+    x=alt.X("media:Q", title="Dano médio"),
+    y=alt.Y("nome:N", sort="-x", title="Magia"),
+    tooltip=[
+        alt.Tooltip("nome", title="Magia"),
+        alt.Tooltip("dano", title="Dano"),
+        alt.Tooltip("media", title="Dano médio")
+    ]
 )
 
 st.altair_chart(chart, use_container_width=True)
@@ -331,7 +397,8 @@ st.altair_chart(chart, use_container_width=True)
 # =========================
 # 11 MELHORES MAGIAS GLOBAL
 # =========================
-st.header("11) Top 10 Magias (score global ajustado)")
+st.header("11) Top 10 Magias com maior score")
+st.caption("Score da magia = dano médio + score do tipo de dano")
 
 df = df_magia.copy()
 
@@ -339,15 +406,20 @@ df["score_dano"] = df["dano"].map(
     df_rank.set_index("dano")["score"]
 )
 
-df["valor"] = df["media"] - df["score_dano"]
+df["valor"] = df["media"] + df["score_dano"]
 
 df = df.sort_values("valor", ascending=False).head(10)
 
 chart = alt.Chart(df).mark_bar().encode(
-    x="valor:Q",
-    y=alt.Y("nome:N", sort="-x"),
+    x=alt.X("valor:Q", title="Score"),
+    y=alt.Y("nome:N", sort="-x", title="Magia"),
     color="dano",
-    tooltip=["nome", "dano", "media", "valor"]
+    tooltip=[
+        alt.Tooltip("nome", title="Magia"),
+        alt.Tooltip("dano", title="Dano"),
+        alt.Tooltip("valor", title="Score"),
+        alt.Tooltip("media", title="Dano médio")
+    ]
 )
 
 st.altair_chart(chart, use_container_width=True)
