@@ -50,7 +50,7 @@ st.markdown(f"""
         <div class="card-title">🐉 Monstros</div>
         <div class="card-value">{total_monstros}</div>
     </div>
-<div>
+<div>as
 <div class="cards-container">
     <div class="card">
         <div class="card-title">✨ Magias</div>
