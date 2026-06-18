@@ -146,9 +146,9 @@ with col2:
     st.altair_chart(chart, use_container_width=True)
 
 # =========================
-# 4 VULNERABILIDADE
+# 5 VULNERABILIDADE
 # =========================
-st.header("4) Top vulnerabilidades")
+st.header("5) Top vulnerabilidades")
 
 df = q.vulnerabilidade()
 
@@ -163,9 +163,9 @@ chart = alt.Chart(df).mark_bar().encode(
 st.altair_chart(chart, use_container_width=True)
 
 # =========================
-# 5 RESISTÊNCIA
+# 6 RESISTÊNCIA
 # =========================
-st.header("5) Top resistências")
+st.header("6) Top resistências")
 
 df = q.resistencia()
 
@@ -206,9 +206,9 @@ chart = alt.Chart(df_long).mark_bar().encode(
 st.altair_chart(chart, use_container_width=True)
 
 # =========================
-# 6 IMUNIDADE
+# 7 IMUNIDADE
 # =========================
-st.header("6) Top imunidades")
+st.header("7) Top imunidades")
 
 df = q.imunidade()
 
@@ -249,10 +249,10 @@ chart = alt.Chart(df_long).mark_bar().encode(
 st.altair_chart(chart, use_container_width=True)
 
 # =========================
-# 7 TABELA RANKING
+# 8 TABELA RANKING
 # =========================
-st.header("7) Ranking de Tipos de Dano")
-st.caption("Score do tipo de dano = Qdt. Vulnerabilidades * Peso vulnerabilidade - Qdt. Resitências * Peso resistência + Qtd. Imunidades * Peso imunidade")
+st.header("8) Ranking de Tipos de Dano")
+st.caption("Score do tipo de dano = Qdt. Vulnerabilidades * Peso vulnerabilidade - Qdt. Resitências * Peso resistência - Qtd. Imunidades * Peso imunidade")
 
 df_rank = q.tabela_danos()
 
@@ -301,10 +301,10 @@ st.dataframe(df_rank)
 col1, col2 = st.columns([1, 1])
 
 # =========================
-# 8 MAGIAS POR ESCOLA
+# 9 MAGIAS POR ESCOLA
 # =========================
 with col1:
-    st.header("8) Magias por Escola")
+    st.header("9) Magias por Escola")
 
     df = q.magias_escola()
 
@@ -322,10 +322,10 @@ with col1:
     st.altair_chart(chart, use_container_width=True)
 
 # =========================
-# 9 MAGIAS POR NÍVEL
+# 10 MAGIAS POR NÍVEL
 # =========================
 with col2:
-    st.header("9) Magias por Nível")
+    st.header("10) Magias por Nível")
 
     df = q.magias_nivel()
 
@@ -343,9 +343,9 @@ with col2:
     st.altair_chart(chart, use_container_width=True)
 
 # =========================
-# 10 MELHORES MAGIAS DO TOP DANO
+# 11 MELHORES MAGIAS DO TOP DANO
 # =========================
-st.header("10) Top 10 magias com maior dano médio")
+st.header("11) Top 10 magias com maior dano médio")
 
 df_magia = q.dano_magia()
 
@@ -395,9 +395,9 @@ chart = alt.Chart(df).mark_bar().encode(
 st.altair_chart(chart, use_container_width=True)
 
 # =========================
-# 11 MELHORES MAGIAS GLOBAL
+# 12 MELHORES MAGIAS GLOBAL
 # =========================
-st.header("11) Top 10 Magias com maior score")
+st.header("12) Top 10 Magias com maior score")
 st.caption("Score da magia = dano médio + score do tipo de dano")
 
 df = df_magia.copy()
